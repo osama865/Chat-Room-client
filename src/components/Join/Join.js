@@ -15,6 +15,7 @@ export default function Join() {
   };
 
   const queryString = `/chat?Name=${Name}&Room=${Room}`;
+  console.log(queryString);
 
   return (
     <div className="joinoutterContainer">
@@ -38,7 +39,7 @@ export default function Join() {
         </div>
         <Link
           onClick={handleJoin}
-          to={{pathname:queryString}}
+          to={{pathname:"/chat",search:`?Name=${Name}&Room=${Room}`}}
         >
           <button className="button mt-20" type="submit">
             Sign In

@@ -16,7 +16,7 @@ const Chat = () => {
   const [users, setUsers] = useState([]);
   const [message, setMessage] = useState("");
   const [messages, setMessages] = useState([]);
-  const ENDPOINT = "https://chat-server-smoky.vercel.app/";
+  const ENDPOINT = "http://localhost:5000/";
 
   const [searchParams] = useSearchParams();
   const NameParam = searchParams.get("Name");
@@ -27,25 +27,25 @@ const Chat = () => {
 
     setRoom(RoomParam);
     setName(NameParam);
-
+    console.log(Room,Name);
     socket.emit("join", { Name: NameParam, Room: RoomParam }, (error) => {
       if (error) {
         alert(error);
       }
     });
-  }, [ENDPOINT, NameParam, RoomParam]);
+  }, []);
 
   useEffect(() => {
-    socket.on("message", message => {
-      setMessages(messages => [...messages, message]);
+    socket.on("message", (message) => {
+      setMessages((messages) => [...messages, message]);
     });
 
     socket.on("roomData", ({ users }) => {
       setUsers(users);
     });
-  }, []);
+  }, [message]);
 
-  const sendMessage = event => {
+  const sendMessage = (event) => {
     event.preventDefault();
 
     if (message) {
@@ -58,11 +58,27 @@ const Chat = () => {
       <div className="container">
         <InfoBar Room={Room} />
         <Messages messages={messages} Name={Name} />
-        <Input
-          message={message}
-          setMessage={setMessage}
-          sendMessage={sendMessage}
-        />
+        <form className="form">
+          <input
+            className="input"
+            type="text"
+            value={message}
+            onChange={(event) => setMessage(event.target.value)}
+            onKeyDown={(event) =>
+              event.key === "Enter" ? sendMessage(event) : null
+            }
+            placeholder="Type a Message here..."
+          />
+          <button
+            className="sendButton"
+            onClick={(event) => {
+              console.log(event);
+              sendMessage(event);
+            }}
+          >
+            Send
+          </button>
+        </form>
       </div>
       <TextContainer users={users} />
     </div>
